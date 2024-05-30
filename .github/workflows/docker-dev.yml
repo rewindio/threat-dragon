@@ -1,0 +1,33 @@
+name: Build dev image
+concurrency: docker
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '*.md'
+      - './github/*'
+
+  workflow_dispatch:
+
+  repository_dispatch:
+    types: [base-image]  
+
+jobs:
+
+  development:
+    name: "Build development image"
+    uses: rewindio/github-action-ghcr/.github/workflows/build-and-push.yml@v0
+    with:
+      docker_target: development
+      docker_image_repository: ${{ github.repository }}
+      platforms: "linux/amd64,linux/arm64"
+    secrets:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      BUILD_ARGS: |
+        CONTAINER_REGISTRY_PAT=${{ secrets.REWIND_GITHUB_PACKAGES_READ_ONLY_TOKEN }}
+        CACHE_REPOSITORY=ghcr.io/${{ github.repository }}
+        CACHE_TAG=development
