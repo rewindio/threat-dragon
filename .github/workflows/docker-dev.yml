@@ -51,4 +51,4 @@ jobs:
           push: true
           platforms: linux/arm64, linux/amd64
           build-args: NODE_VERSION=${{ env.NODE_VERSION }}
-          tags: ${{ env.IMAGE_NAME }}:${{ env.NODE_VERSION }}
+          tags: ${{ env.IMAGE_NAME }}:development
