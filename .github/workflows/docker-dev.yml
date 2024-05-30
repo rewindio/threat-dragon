@@ -5,8 +5,8 @@ on:
     branches:
       - main
       - fix/ghcr-workflow
-    paths-ignore:
-      - ".github/**"
+    #paths-ignore:
+      #- ".github/**"
   workflow_dispatch:
 
 jobs:
