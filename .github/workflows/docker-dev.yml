@@ -9,6 +9,7 @@ on:
       - '**/*.md'
       - 'docs/**'
       - '*.md'
+      - './github/*'
 
   workflow_dispatch:
 
