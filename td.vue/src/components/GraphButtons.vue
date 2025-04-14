@@ -43,11 +43,23 @@
             :title="$t('threatmodel.buttons.toggleGrid')"
             text="" />
 
+        <b-dropdown right :text="$t('forms.export')" id="export-graph-btn">
+            <b-dropdown-item @click="exportPNG" id="export-graph-png">
+                PNG
+            </b-dropdown-item>
+            <b-dropdown-item @click="exportJPEG" id="export-graph-jpeg">
+                JPEG
+            </b-dropdown-item>
+            <b-dropdown-item @click="exportSVG" id="export-graph-svg">
+                SVG
+            </b-dropdown-item>
+        </b-dropdown>
+
         <td-form-button
             :onBtnClick="closeDiagram"
             icon="times"
             :text="$t('forms.close')" />
-            
+
         <td-form-button
             :isPrimary="true"
             :onBtnClick="save"
@@ -58,6 +70,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 import TdFormButton from '@/components/FormButton.vue';
 
 export default {
@@ -65,6 +79,9 @@ export default {
     components: {
         TdFormButton
     },
+    computed: mapState({
+        diagram: (state) => state.threatmodel.selectedDiagram,
+    }),
     data() {
         return {
             gridShowing: true
@@ -78,7 +95,6 @@ export default {
     methods: {
         save() {
             this.$emit('saved');
-
         },
         async closeDiagram() {
             this.$emit('closed');
@@ -87,20 +103,30 @@ export default {
             return;
         },
         undo() {
-            if (this.graph.canUndo()) {
-                this.graph.undo();
+            if (this.graph.getPlugin('history').canUndo()) {
+                this.graph.getPlugin('history').undo();
             }
         },
         redo() {
-            if (this.graph.canRedo()) {
-                this.graph.redo();
+            if (this.graph.getPlugin('history').canRedo()) {
+                this.graph.getPlugin('history').redo();
             }
         },
         zoomIn() {
-            this.graph.zoom(0.2);
+            if (this.graph.zoom() < 1.0) {
+                this.graph.zoom(0.1);
+            } else {
+                this.graph.zoom(0.2);
+            }
+            console.debug('zoom to ' + this.graph.zoom());
         },
         zoomOut() {
-            this.graph.zoom(-0.2);
+            if (this.graph.zoom() < 1.0) {
+                this.graph.zoom(-0.1);
+            } else {
+                this.graph.zoom(-0.2);
+            }
+            console.debug('zoom to ' + this.graph.zoom());
         },
         deleteSelected() {
             this.graph.removeCells(this.graph.getSelectedCells());
@@ -113,6 +139,19 @@ export default {
                 this.graph.showGrid();
                 this.gridShowing = true;
             }
+        },
+        exportPNG() {
+            this.graph.exportPNG(`${this.diagram.title}.png`, {
+                padding: 50
+            });
+        },
+        exportJPEG() {
+            this.graph.exportJPEG(`${this.diagram.title}.jpeg`, {
+                padding: 50
+            });
+        },
+        exportSVG() {
+            this.graph.exportSVG(`${this.diagram.title}.svg`);
         }
     }
 };

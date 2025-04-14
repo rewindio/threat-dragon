@@ -6,94 +6,40 @@ on:
   workflow_dispatch:
 
 env:
+  HEROKU_APP: threatdragon-v2
+  HEROKU_EMAIL: jon.gadsden@owasp.org
+  HEROKU_HEALTH: https://www.threatdragon.com/healthz
   # threatdragon is the working area on docker hub so use this area
   # owasp/threat-dragon is the final release area so DO NOT use that
   IMAGE_NAME: threatdragon/owasp-threat-dragon:latest
-  HEROKU_APP: threatdragon-v2
+  ZAP_FILE: zap-scan-push
 
 # for security reasons the github actions are pinned to specific release versions
 jobs:
-  link_checker:
-    name: Link checker
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout markdown
-        uses: actions/checkout@v4.1.1
-
-      - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.10.0
-        with:
-          fail: true
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-  md_linter:
-    name: Lint markdown
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout markdown
-        uses: actions/checkout@v4.1.1
-
-      # do not use  **/*.md as this will include the third party packages
-      - name: Lint markdown
-        uses: DavidAnson/markdownlint-cli2-action@v16.0.0
-        with:
-          config: '.markdownlint.yaml'
-          globs: '.*.md *.md td.*/*.md .github/**/*.md docs/**/*.md'
-
-  codeql:
-    name: Analyze with codeql
-    runs-on: ubuntu-22.04
-    permissions:
-      security-events: write
-
-    strategy:
-      fail-fast: false
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.1.1
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3.25.1
-        with:
-          languages: 'javascript'
-          config-file: ./.github/codeql/codeql-config.yml
-          # If you wish to specify custom queries, you can do so here or in a config file.
-          # By default, queries listed here will override any specified in a config file.
-          # Prefix the list here with "+" to use these queries and those in the config file.
-
-      - name: CodeQL autobuild
-        uses: github/codeql-action/autobuild@v3.25.1
-
-      - name: Perform vulnerability analysis
-        uses: github/codeql-action/analyze@v3.25.1
-
   server_unit_tests:
     name: Server unit tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: td.server
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm clean-install
@@ -108,34 +54,36 @@ jobs:
         run: npm run make-sbom
 
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms-server
           path: './td.server/sbom.*'
+          include-hidden-files: true
 
   site_unit_tests:
     name: Site unit tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm clean-install
@@ -148,128 +96,105 @@ jobs:
 
   desktop_unit_tests:
     name: Desktop unit tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm clean-install
 
       - name: lint
-        run: npm run lint
+        run: npm run lint:desktop
 
       - name: Unit test
         run: npm run test:desktop
 
-  desktop_e2e_tests:
-    name: Desktop e2e tests
-    runs-on: ubuntu-22.04
-    needs: [desktop_unit_tests, site_unit_tests]
-    defaults:
-      run:
-        working-directory: td.vue
+  codeql:
+    name: Analyze with codeql
+    runs-on: ubuntu-24.04
+    needs: [server_unit_tests, site_unit_tests]
+    permissions:
+      security-events: write
+
+    strategy:
+      fail-fast: false
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.0
 
-      - name: Setup Chrome
-        id: setup-chrome
-        uses: browser-actions/setup-chrome@v1.6.0
-
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3.28.1
         with:
-          node-version: '18'
+          languages: 'javascript'
+          config-file: ./.github/codeql/codeql-config.yml
+          # If you wish to specify custom queries, you can do so here or in a config file.
+          # By default, queries listed here will override any specified in a config file.
+          # Prefix the list here with "+" to use these queries and those in the config file.
 
-      - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: CodeQL autobuild
+        uses: github/codeql-action/autobuild@v3.28.1
 
-      - name: Install packages
-        run: npm clean-install
-
-      - name: Build application
-        # test only so do not publish
-        run: npm run build:desktop -- --publish=never
-
-      - name: End to end tests
-        run: |
-          ${{ steps.setup-chrome.outputs.chrome-path }} --version
-          ln -sf threat-dragon dist-desktop/linux-unpacked/Threat-Dragon-ng
-          npm run test:e2e:desktop
-
-      - name: Print logs on error
-        run: |
-          echo 'Print desktop wdio logs'
-          pwd
-          cat ./wdio-logs/*.log
-        if: ${{ failure() }}
-
-      - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
-        with:
-          name: sboms-desktop-e2e-test-site
-          path: './td.vue/dist-desktop/bundled/.sbom/*'
+      - name: Perform vulnerability analysis
+        uses: github/codeql-action/analyze@v3.28.1
 
   build_docker_image:
-    name: Build Latest docker
-    runs-on: ubuntu-22.04
+    name: Build latest docker
+    runs-on: ubuntu-24.04
     needs: [site_unit_tests, server_unit_tests]
     if: github.repository == 'OWASP/threat-dragon'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v3.6.0
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3.3.0
+        uses: docker/setup-buildx-action@v3.10.0
         with:
           install: true
 
-      - name: Setup dockerx cache
-        uses: actions/cache@v4.0.0
+      - name: Cache Docker layers
+        uses: actions/cache@v4.2.0
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+            ${{ runner.os }}-
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.1.0
+        uses: docker/login-action@v3.4.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v5.3.0
+      # platform manifests not (yet) supported, so split out architectures
+      - name: Build  for amd64 and push latest
+        id: docker_build_amd64
+        uses: docker/build-push-action@v6.15.0
         with:
           context: ./
           file: ./Dockerfile
@@ -277,72 +202,85 @@ jobs:
           push: true
           tags:  ${{ env.IMAGE_NAME }}
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-          platforms: linux/amd64,linux/arm64
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+          platforms: linux/amd64
+          load: true
+
+      - name: Build for arm64 and push latest-arm64
+        id: docker_build_arm64
+        uses: docker/build-push-action@v6.15.0
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags:  ${{ env.IMAGE_NAME }}-arm64
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          platforms: linux/arm64
+          load: true
 
       - name: fetch app SBOMs
         run: docker run --rm --entrypoint tar "$IMAGE_ID" -c boms | tar -xv
         env:
-          IMAGE_ID: ${{ steps.docker_build.outputs.imageid }}
+          IMAGE_ID: ${{ steps.docker_build_amd64.outputs.imageid }}
 
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms-container-image-app
           path: './boms/*'
+          include-hidden-files: true
           if-no-files-found: error
+
+      - # Temp fix for large cache bug
+        # https://github.com/docker/build-push-action/issues/252
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   heroku_deploy:
     name: Upload to Heroku
-    runs-on: ubuntu-22.04
-    needs: [build_docker_image]
+    runs-on: ubuntu-22.04      # ubuntu-24.04 does not have heroku cli, yet
+    needs: build_docker_image
 
     steps:
-      - name: Pull docker image
-        run: docker pull ${{ env.IMAGE_NAME }}
-
-      - name: Login to Heroku Registry
-        uses: docker/login-action@v3.1.0
+      - uses: actions/checkout@v4.2.0
+      - uses: akhileshns/heroku-deploy@v3.14.15
         with:
-          registry: registry.heroku.com
-          username: _
-          password: ${{ secrets.HEROKU_API_KEY }}
-
-      - name: Tag Heroku image
-        run: docker tag ${{ env.IMAGE_NAME }} registry.heroku.com/${{ env.HEROKU_APP }}/web
-
-      - name: Push to Heroku
-        run: docker push registry.heroku.com/${{ env.HEROKU_APP }}/web
-
-      - name: Deploy to Heroku
-        run: heroku container:release web --app ${{ env.HEROKU_APP }}
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ env.HEROKU_APP }}
+          heroku_email: ${{ env.HEROKU_EMAIL }}
+          healthcheck: ${{ env.HEROKU_HEALTH }}
+          rollbackonhealthcheckfailed: true
+          usedocker: true
 
   browserstack_smoke_test:
     name: Browserstack smoke test
-    runs-on: ubuntu-22.04
-    needs: [heroku_deploy]
+    runs-on: ubuntu-24.04
+    needs: heroku_deploy
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm clean-install
@@ -356,25 +294,17 @@ jobs:
       - name: Run cross-browser smoke tests
         run: npm run test:e2e-smokes
 
-      - name: Rollback heroku on error
-        if: ${{ failure() }}
-        run: |
-          heroku rollback --app ${{ env.HEROKU_APP }}
-          heroku logs --source heroku
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
   e2e_smokes:
     name: Site e2e smokes
-    runs-on: ubuntu-22.04
-    needs: [build_docker_image]
+    runs-on: ubuntu-24.04
+    needs: build_docker_image
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
       - name: Run Threat Dragon
         run: |
@@ -389,18 +319,19 @@ jobs:
             -e SERVER_API_PROTOCOL='http' \
             ${{ env.IMAGE_NAME }}
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm clean-install
@@ -409,23 +340,23 @@ jobs:
         run: npm run test:e2e-ci-smokes
 
       - name: Upload e2e videos
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: e2e_vids.zip
           path: td.vue/tests/e2e/videos
-        if: ${{ always() }}
+        if: ${{ failure() && hashFiles('td.vue/tests/e2e/videos/') != '' }}
 
   e2e_tests:
     name: Site e2e tests
-    runs-on: ubuntu-22.04
-    needs: [e2e_smokes]
+    runs-on: ubuntu-24.04
+    needs: e2e_smokes
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
       - name: Run Threat Dragon
         run: |
@@ -440,18 +371,19 @@ jobs:
             -e SERVER_API_PROTOCOL='http' \
             ${{ env.IMAGE_NAME }}
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm clean-install
@@ -460,16 +392,16 @@ jobs:
         run: npm run test:e2e-ci
 
       - name: Upload e2e videos
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: e2e_vids.zip
           path: td.vue/tests/e2e/videos
-        if: ${{ always() }}
+        if: ${{ failure() && hashFiles('td.vue/tests/e2e/videos/') != '' }}
 
-  zap_scan_web:
-    name: Site zap scan
-    runs-on: ubuntu-22.04
-    needs: [build_docker_image]
+  zap_scan_web_app:
+    name: Local site zap scan
+    runs-on: ubuntu-24.04
+    needs: build_docker_image
 
     steps:
       - name: Run Threat Dragon
@@ -486,171 +418,152 @@ jobs:
             ${{ env.IMAGE_NAME }}
 
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
       - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.10.0
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           target: 'http://localhost:3000'
           rules_file_name: '.github/workflows/.zap-rules-web.tsv'
           allow_issue_writing: false
           fail_action: true
+          artifact_name: ${{ env.ZAP_FILE }}
           cmd_options: '-a'
 
   scan_image_with_trivy:
-    name: Scan with trivy
-    runs-on: ubuntu-22.04
-    needs: [build_docker_image]
+    name: Scan image with Trivy
+    runs-on: ubuntu-24.04
+    needs: build_docker_image
     permissions:
       contents: write
+      security-events: write
 
     steps:
-      # Need .trivyignore
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.19.0
+        uses: aquasecurity/trivy-action@0.30.0
         with:
           image-ref: '${{ env.IMAGE_NAME }}'
-          format: 'table'
-          exit-code: 1
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          trivyignores: '.github/workflows/.trivyignore'
+          output: 'trivy-results.sarif'
+
+      - name: Upload scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3.28.1
+        with:
+          sarif_file: 'trivy-results.sarif'
 
   desktop_windows_test:
-    name: Windows desktop build
+    name: Windows desktop build test
     runs-on: windows-latest
-    needs: [desktop_e2e_tests]
+    needs: [desktop_unit_tests, site_unit_tests]
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm install
 
-      # Build Windows installer
       - name: Build Windows executable
-        # follow Comodo signing instructions
-        # comodosslstore.com/resources/comodo-code-signing-certificate-instructions
-        env:
-          # Windows signing certificate and password
-          CSC_KEY_PASSWORD: ${{ secrets.WINDOWS_CERT_PASSWORD}}
-          CSC_LINK:  ${{ secrets.WINDOWS_CERT }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build:desktop -- --windows --publish never
 
-      - name: Print logs on error
-        if: ${{ failure() }}
-        run: find . -name "*.log" -exec cat '{}' \;
-
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms-desktop-windows-site
           path: './td.vue/dist-desktop/bundled/.sbom/*'
+          include-hidden-files: true
           if-no-files-found: error
 
   desktop_macos_test:
-    name: MacOS desktop build
+    name: MacOS desktop build test
     runs-on: macos-latest
-    needs: [desktop_e2e_tests]
+    needs: [desktop_unit_tests, site_unit_tests]
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm install
 
-      - name: Prepare for MacOS notarization
-        # Import Apple API key for app notarization on macOS
-        # see github.com/samuelmeuli/action-electron-builder#notarization
-        run: |
-          mkdir -p ~/private_keys/
-          echo '${{ secrets.API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.API_KEY_ID }}.p8
-
       - name: Build MacOS disk image
         env:
-          # MacOS signing certificate and password
-          # see github.com/samuelmeuli/action-electron-builder#code-signing
-          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
-          CSC_LINK:  ${{ secrets.MAC_CERTS }}
-          # MacOS notarization API IDs
-          # see github.com/samuelmeuli/action-electron-builder#notarization
-          API_KEY_ID: ${{ secrets.API_KEY_ID }}
-          API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
-          # github token is automatically provided to the action
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build:desktop -- --mac --publish never
 
-      - name: Print logs on error
-        if: ${{ failure() }}
-        run: find . -name "*.log" -exec cat '{}' \; -print
-
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms-desktop-macos-site
           path: './td.vue/dist-desktop/bundled/.sbom/*'
+          include-hidden-files: true
           if-no-files-found: error
 
   desktop_linux_test:
-    name: Linux desktop build
-    runs-on: ubuntu-22.04
-    needs: [desktop_e2e_tests]
+    name: Linux desktop build test
+    runs-on: ubuntu-24.04
+    needs: [desktop_unit_tests, site_unit_tests]
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm install
@@ -666,36 +579,38 @@ jobs:
         run: find . -name "*.log" -exec cat '{}' \; -print
 
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms-desktop-linux-site
           path: './td.vue/dist-desktop/bundled/.sbom/*'
+          include-hidden-files: true
           if-no-files-found: error
 
   desktop_linux_snap_test:
-    name: Linux snap build
-    runs-on: ubuntu-22.04
-    needs: [desktop_e2e_tests]
+    name: Linux snap build test
+    runs-on: ubuntu-24.04
+    needs: [desktop_unit_tests, site_unit_tests]
     defaults:
       run:
         working-directory: td.vue
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.2.0
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v4.0.1
+      - name: Use node LTS 20.14.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: '18'
+          node-version: '20.14.0'
 
       - name: Cache NPM dir
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4.2.0
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+            ${{ runner.os }}-
 
       - name: Install packages
         run: npm install
@@ -711,15 +626,16 @@ jobs:
         run: find . -name "*.log" -exec cat '{}' \; -print
 
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms-desktop-linux-snap-site
           path: './td.vue/dist-desktop/bundled/.sbom/*'
+          include-hidden-files: true
           if-no-files-found: error
 
-  sbom_combiner:
-    name: SBOM combiner
-    runs-on: ubuntu-22.04
+  sbom_combiner_test:
+    name: SBOM combiner test
+    runs-on: ubuntu-24.04
     needs:
       - server_unit_tests
       - desktop_macos_test
@@ -729,7 +645,7 @@ jobs:
       - build_docker_image
     steps:
       - name: Fetch prepared SBOM artifacts
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v4.2.1
         with:
           pattern: 'sboms-*'
           merge-multiple: false
@@ -750,7 +666,8 @@ jobs:
           cp raw/sboms-desktop-linux-snap-site/bom.xml  sboms/threat-dragon-desktop-linux-snap-site-bom.xml
           cp raw/sboms-container-image-app/*            sboms/threat-dragon-container-image/app/
       - name: Save SBOM artifact
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: sboms
           path: 'sboms/'
+          include-hidden-files: true

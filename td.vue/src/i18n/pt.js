@@ -29,6 +29,10 @@ const por = {
             displayName: 'Bitbucket',
             loginWith: 'Login com'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Login com'
+        },
         local: {
             displayName: 'Sessão Local',
             loginWith: 'Login com'
@@ -79,7 +83,16 @@ const por = {
     branch: {
         select: 'Selecionar uma branch',
         from: 'da lista abaixo ou',
-        chooseRepo: 'escolher outro repositório'
+        chooseRepo: 'escolher outro repositório',
+        or: 'ou',
+        addNew: 'adicionar um novo branch',
+        protectedBranch: 'Branch protegida',
+        nameRequired: 'Nome da branch é obrigatório',
+        nameExists: 'Nome da branch já existe',
+        refBranch: 'Branch de referência',
+        add: 'Adicionar branch',
+        cancel: 'Cancelar',
+        name: 'Nome da branch',
     },
     threatmodelSelect: {
         select: 'Selecion a Threat Model from',
@@ -207,6 +220,10 @@ const por = {
             zoom: {
                 shortcut: '(ctrl/cmd) + rolagem do mouse',
                 action: 'Zoom'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const por = {
         saveAs: 'Save As',
         saveModel: 'Save Model',
         saveModelAs: 'Save Model As',
-        search: 'Search'
+        search: 'Search',
+        next: 'próximo',
+        previous: 'anterior'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const por = {
             mitigated: 'Mitigated'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Low',
             medium: 'Medium',
-            high: 'High'
+            high: 'High',
+            critical: 'Critical'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const por = {
             showMitigatedThreats: 'Show mitigated threats',
             showModelDiagrams: 'Show model diagrams',
             showEmpty: 'Show empty elements',
+            showProperties: 'Show element properties',
             showBranding: 'Threat Dragon logo'
         },
         title: 'Relatório do modelo de ameaças para',
@@ -356,9 +378,11 @@ const por = {
             total: 'Ameaças totais',
             mitigated: 'Total Mitigado',
             notMitigated : 'Não atenuado',
+            openCritical : 'Abrir / Crítica Prioridade',
             openHigh : 'Abrir / Alta Prioridade',
             openMedium : 'Abrir / Prioridade Média',
             openLow : 'Abrir / Baixa Prioridade',
+            openTbd : 'Abrir / TBD Prioridade',
             openUnknown : 'Prioridade Aberta / Desconhecida'
         }
     },

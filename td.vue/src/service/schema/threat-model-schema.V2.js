@@ -7,7 +7,7 @@ export const schema = {
         'version': {
             'description': 'Threat Dragon version used in the model',
             'type': 'string',
-            'maxLength': 5
+            'maxLength': 10
         },
         'summary': {
             'description': 'Threat model project meta-data',
@@ -85,7 +85,7 @@ export const schema = {
                             'version': {
                                 'description': 'Threat Dragon version used in the diagram',
                                 'type': 'string',
-                                'maxLength': 5
+                                'maxLength': 10
                             },
                             'cells': {
                                 'description': 'The individual diagram components',
@@ -246,7 +246,7 @@ export const schema = {
                                                     'type': 'boolean'
                                                 }
                                             },
-                                            'required': [ 'description', 'hasOpenThreats', 'name', 'type' ]
+                                            'required': [ 'hasOpenThreats', 'name', 'type' ]
                                         },
                                         'id': {
                                             'description': 'The component unique identifier (UUID)',
@@ -393,11 +393,11 @@ export const schema = {
                                                 'properties': {
                                                     'x': {
                                                         'description': 'The horizontal value of the curve point',
-                                                        'type': 'integer'
+                                                        'type': 'number'
                                                     },
                                                     'y': {
                                                         'description': 'The vertical value of the curve point',
-                                                        'type': 'integer'
+                                                        'type': 'number'
                                                     }
                                                 },
                                                 'required': [ 'x', 'y' ]

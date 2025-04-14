@@ -1,4 +1,4 @@
-const id = {
+const ind = {
     auth: {
         sessionExpired: 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melanjutkan.'
     },
@@ -27,6 +27,10 @@ const id = {
         },
         bitbucket: {
             displayName: 'Bitbucket',
+            loginWith: 'Masuk dengan'
+        },
+        google: {
+            displayName: 'Google',
             loginWith: 'Masuk dengan'
         },
         local: {
@@ -79,7 +83,16 @@ const id = {
     branch: {
         select: 'Pilih cabang dari',
         from: 'dari daftar di bawah atau',
-        chooseRepo: 'pilih repo lain'
+        chooseRepo: 'pilih repo lain',
+        or: 'atau',
+        addNew: 'tambahkan cabang baru',
+        protectedBranch: 'Cabang dilindungi',
+        nameRequired: 'Nama cabang diperlukan',
+        nameExists: 'Nama cabang sudah ada',
+        refBranch: 'Cabang Referensi',
+        add: 'Tambah cabang',
+        cancel: 'Batal',
+        name: 'Nama Cabang',
     },
     threatmodelSelect: {
         select: 'Pilih Model Ancaman dari',
@@ -207,6 +220,10 @@ const id = {
             zoom: {
                 shortcut: '(ctrl/cmd) + roda mouse',
                 action: 'Perbesar/Perkecil'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const id = {
         saveAs: 'Simpan Sebagai',
         saveModel: 'Simpan Model',
         saveModelAs: 'Simpan Model Sebagai',
-        search: 'Cari'
+        search: 'Cari',
+        next: 'Berikutnya',
+        previous: 'sebelumnya'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const id = {
             mitigated: 'Diredam'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Rendah',
             medium: 'Sedang',
-            high: 'Tinggi'
+            high: 'Tinggi',
+            critical: 'Kritis'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const id = {
             showMitigatedThreats: 'Tampilkan ancaman yang diredam',
             showModelDiagrams: 'Tampilkan diagram model',
             showEmpty: 'Tampilkan elemen kosong',
+            showProperties: 'Show element properties',
             showBranding: 'Logo Threat Dragon'
         },
         title: 'Laporan model ancaman untuk',
@@ -356,9 +378,11 @@ const id = {
             total: 'Total Ancaman',
             mitigated: 'Total Diredam',
             notMitigated: 'Belum Diredam',
+            openCritical: 'Terbuka / Prioritas Kritis',
             openHigh: 'Terbuka / Prioritas Tinggi',
             openMedium: 'Terbuka / Prioritas Sedang',
             openLow: 'Terbuka / Prioritas Rendah',
+            openTbd: 'Terbuka / Prioritas TBD',
             openUnknown: 'Terbuka / Prioritas Tidak Diketahui'
         }
     },
@@ -374,4 +398,4 @@ const id = {
     }
 };
 
-export default id;
+export default ind;

@@ -29,6 +29,10 @@ const ukr = {
             displayName: 'Bitbucket',
             loginWith: 'Login with'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Login with'
+        },
         local: {
             displayName: 'Local Session',
             loginWith: 'Login to'
@@ -79,7 +83,16 @@ const ukr = {
     branch: {
         select: 'Select a branch from',
         from: 'from the list below or',
-        chooseRepo: 'choose another repo'
+        chooseRepo: 'choose another repo',
+        or: 'or',
+        addNew: 'add a new branch',
+        protectedBranch: 'Protected branch',
+        nameRequired: 'Branch name is required',
+        nameExists: 'Branch name already exists',
+        refBranch: 'Reference branch',
+        add: 'add branch',
+        cancel: 'Cancel',
+        name: 'branch name',
     },
     threatmodelSelect: {
         select: 'Select a Threat Model from',
@@ -207,6 +220,10 @@ const ukr = {
             zoom: {
                 shortcut: '(ctrl/cmd) + mousewheel',
                 action: 'Zoom'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const ukr = {
         saveAs: 'Save As',
         saveModel: 'Save Model',
         saveModelAs: 'Save Model As',
-        search: 'Search'
+        search: 'Search',
+        next:'Next',
+        previous:'Previous'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const ukr = {
             mitigated: 'Mitigated'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Low',
             medium: 'Medium',
-            high: 'High'
+            high: 'High',
+            critical: 'Critical'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const ukr = {
             showMitigatedThreats: 'Show mitigated threats',
             showModelDiagrams: 'Show model diagrams',
             showEmpty: 'Show empty elements',
+            showProperties: 'Show element properties',
             showBranding: 'Threat Dragon logo'
         },
         title: 'Threat model report for',
@@ -356,9 +378,11 @@ const ukr = {
             total: 'Total Threats',
             mitigated: 'Total Mitigated',
             notMitigated: 'Not Mitigated',
+            openCritical: 'Open / Critical Priority',
             openHigh: 'Open / High Priority',
             openMedium: 'Open / Medium Priority',
             openLow: 'Open / Low Priority',
+            openTbd: 'Open / TBD Priority',
             openUnknown: 'Open / Unknown Priority'
         }
     },

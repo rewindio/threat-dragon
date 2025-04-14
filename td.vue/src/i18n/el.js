@@ -29,6 +29,10 @@ const ell = {
             displayName: 'Bitbucket',
             loginWith: 'Είσοδος με'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Είσοδος με'
+        },
         local: {
             displayName: 'Τοπική Συνεδρία',
             loginWith: 'Είσοδος με'
@@ -79,7 +83,16 @@ const ell = {
     branch: {
         select: 'Επιλέξτε ένα παρακλάδι (branch) από',
         from: 'από την παρακάτω λίστα ή',
-        chooseRepo: 'επιλέξτε ένα άλλο αποθετήριο'
+        chooseRepo: 'επιλέξτε ένα άλλο αποθετήριο',
+        or: 'ή',
+        addNew: 'να προσθέσετε έναν νέο κλάδο',
+        protectedBranch: 'Προστατευμένος κλάδος',
+        nameRequired: 'Το όνομα του κλάδου είναι υποχρεωτικό',
+        nameExists: 'Το όνομα του κλάδου υπάρχει ήδη σε αυτό το αποθετήριο',
+        refBranch: 'Κλάδος αναφοράς (Ref Branch)',
+        add: 'Προσθήκη υποκαταστήματος',
+        cancel: 'Ακύρωση',
+        name: 'Όνομα υποκαταστήματος',
     },
     threatmodelSelect: {
         select: 'Επιλέξτε ένα μοντέλο απειλών από',
@@ -207,6 +220,10 @@ const ell = {
             zoom: {
                 shortcut: '(ctrl/cmd) + τροχός κύλισης',
                 action: 'Εστίαση'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const ell = {
         saveAs: 'Αποθήκευση ως',
         saveModel: 'Αποθήκευση Μοντέλου',
         saveModelAs: 'Αποθήκευση Μοντέλου ως',
-        search: 'Αναζήτηση'
+        search: 'Αναζήτηση',
+        next: 'Επόμενο',
+        previous: 'προηγούμενος'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const ell = {
             mitigated: 'Καλύφθηκε'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Χαμηλή',
             medium: 'Μεσαία',
-            high: 'Υψηλή'
+            high: 'Υψηλή',
+            critical: 'Κρίσιμος'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const ell = {
             showMitigatedThreats: 'Εμφάνιση απειλών που έχουν μετριαστεί',
             showModelDiagrams: 'Εμφάνιση διαγραμμάτων μοντέλων',
             showEmpty: 'Προβολή κενών στοιχείων',
+            showProperties: 'Show element properties',
             showBranding: 'Λογότυπο Threat Dragon'
         },
         title: 'Αναφορά μοντέλου απειλών για',
@@ -356,9 +378,11 @@ const ell = {
             total: 'Σύνολο απειλών',
             mitigated: 'Σύνολο μετριασμένων',
             notMitigated: 'Μη μετριασμένες',
+            openCritical: 'Ανοιχτές / Κρίσιμη Προτεραιότητα',
             openHigh: 'Ανοιχτές / Υψηλής Προτεραιότητας',
             openMedium: 'Ανοιχτές / Μέτριας Προτεραιότητας',
             openLow: 'Ανοιχτές / Χαμηλής Προτεραιότητας',
+            openTbd: 'Ανοιχτές / TBD Προτεραιότητα',
             openUnknown: 'Ανοιχτές / Άγνωστης Προτεραιότητας'
         }
     },

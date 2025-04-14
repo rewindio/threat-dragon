@@ -29,6 +29,10 @@ const fin = {
             displayName: 'Bitbucketissa',
             loginWith: 'Kirjaudu sisään'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Kirjaudu sisään'
+        },
         local: {
             displayName: 'paikallisesti',
             loginWith: 'Kirjaudu sisään'
@@ -79,7 +83,16 @@ const fin = {
     branch: {
         select: 'Valitse haara',
         from: 'alla olevista, tai',
-        chooseRepo: 'valitse toinen arkisto'
+        chooseRepo: 'valitse toinen arkisto',
+        or: 'or',
+        addNew: 'lisätä uusi haara',
+        protectedBranch: 'Suojattu haara',
+        nameRequired: 'Haaran nimi vaaditaan',
+        nameExists: 'Haara on jo olemassa',
+        refBranch: 'Viitehaara',
+        add: 'Lisää haara',
+        cancel: 'Peruuta',
+        name: 'Sivuliikkeen nimi',
     },
     threatmodelSelect: {
         select: 'Valitse uhkamalli kohteesta',
@@ -207,6 +220,10 @@ const fin = {
             zoom: {
                 shortcut: '(ctrl/cmd) + rulla',
                 action: 'Suurennos'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const fin = {
         saveAs: 'Tallenna Nimellä',
         saveModel: 'Tallenna Uhkamalli',
         saveModelAs: 'Tallenna Uhkamalli Nimellä',
-        search: 'Etsi'
+        search: 'Etsi',
+        next: 'Seuraava',
+        previous: 'Edellinen'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const fin = {
             mitigated: 'Hallittu'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Alhainen',
             medium: 'Keskitaso',
-            high: 'Korkea'
+            high: 'Korkea',
+            critical: 'Kriittinen'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const fin = {
             showMitigatedThreats: 'Näytä hallitut uhkat',
             showModelDiagrams: 'Näytä uhkamallin kaaviot',
             showEmpty: 'Näytä tyhjät elementit',
+            showProperties: 'Show element properties',
             showBranding: 'Threat Dragon logo'
         },
         title: 'Uhkamallinnus kohteelle',
@@ -356,9 +378,11 @@ const fin = {
             total: 'Uhkia yhteensä',
             mitigated: 'Hallittuja uhkia',
             notMitigated: 'Hallitsemattomia uhkia',
+            openCritical: 'Avoin / Kriittinen tärkeys',
             openHigh: 'Avoin / Korkea tärkeys',
             openMedium: 'Avoin / Keskitason tärkeys',
             openLow: 'Avoin / Alhainen tärkeys',
+            openTbd: 'Avoin / TBD tärkeys',
             openUnknown: 'Avoin / Tuntematon tärkeys'
         }
     },

@@ -10,21 +10,23 @@ const repos = (req, res) => responseWrapper.sendResponseAsync(async () => {
     const repository = repositories.get();
 
     const page = req.query.page || 1;
+    const searchQuerys = req.query.searchQuery || [];
     let reposResp;
     let repos;
-    if (env.get().config.GITHUB_USE_SEARCH === 'true') {
+    // backwardly compatible with previous use of env vars GITHUB_USE_SEARCH and GITHUB_SEARCH_QUERY
+    if (env.get().config.REPO_USE_SEARCH === 'true' || env.get().config.GITHUB_USE_SEARCH === 'true') {
         logger.debug('Using searchAsync');
-        const searchQuery = env.get().config.GITHUB_SEARCH_QUERY;
-        reposResp = await repository.searchAsync(page, req.provider.access_token, searchQuery);
-        repos = reposResp[0].items;
+        const searchQuery = env.get().config.REPO_SEARCH_QUERY ?? env.get().config.GITHUB_SEARCH_QUERY;
+        reposResp = await repository.searchAsync(page, req.provider.access_token, [searchQuery, ...searchQuerys]);
+        repos = reposResp[0].items ?? reposResp[0];
     } else {
         logger.debug('Using reposAsync');
-        reposResp = await repository.reposAsync(page, req.provider.access_token);
+        reposResp = await repository.reposAsync(page, req.provider.access_token, [searchQuerys]);
         repos = reposResp[0];
     }
     const headers = reposResp[1];
     const pageLinks = reposResp[2];
-    logger.debug('API repos request: ' + req);
+    logger.debug(`API repos request: ${logger.transformToString(req)}`);
 
     const pagination = getPagination(headers, pageLinks, page);
 
@@ -45,14 +47,18 @@ const branches = (req, res) => responseWrapper.sendResponseAsync(async () => {
         repo: req.params.repo,
         page: req.query.page || 1
     };
-    logger.debug('API branches request: ' + req);
+    logger.debug(`API branches request: ${logger.transformToString(req)}`);
 
     const branchesResp = await repository.branchesAsync(repoInfo, req.provider.access_token);
     const branches = branchesResp[0];
     const headers = branchesResp[1];
     const pageLinks = branchesResp[2];
 
-    const branchNames = branches.map((x) => x.name);
+    const branchNames = branches.map((x) => ({
+        name: x.name,
+        // Protected branches are not so easy to determine from the API on Bitbucket
+        protected: x.protected||false
+    }));
 
     const pagination = getPagination(headers, pageLinks, repoInfo.page);
 
@@ -70,7 +76,7 @@ const models = (req, res) => responseWrapper.sendResponseAsync(async () => {
         repo: req.params.repo,
         branch: req.params.branch
     };
-    logger.debug('API models request: ' + req);
+    logger.debug(`API models request: ${logger.transformToString(req)}`);
 
     let modelsResp;
     try {
@@ -93,7 +99,7 @@ const model = (req, res) => responseWrapper.sendResponseAsync(async () => {
         branch: req.params.branch,
         model: req.params.model
     };
-    logger.debug('API model request: ' + req);
+    logger.debug(`API model request: ${logger.transformToString(req)}`);
 
     const modelResp = await repository.modelAsync(modelInfo, req.provider.access_token);
     return JSON.parse(Buffer.from(modelResp[0].content, 'base64').toString('utf8'));
@@ -109,7 +115,7 @@ const create = async (req, res) => {
         model: req.params.model,
         body: req.body
     };
-    logger.debug('API create request: ' + req);
+    logger.debug(`API create request: ${logger.transformToString(req)}`);
 
     try {
         const createResp = await repository.createAsync(modelBody, req.provider.access_token);
@@ -130,7 +136,7 @@ const update = async (req, res) => {
         model: req.params.model,
         body: req.body
     };
-    logger.debug('API update request: ' + req);
+    logger.debug(`API update request: ${logger.transformToString(req)}`);
 
     try {
         const updateResp = await repository.updateAsync(modelBody, req.provider.access_token);
@@ -150,7 +156,7 @@ const deleteModel = async (req, res) => {
         branch: req.params.branch,
         model: req.params.model
     };
-    logger.debug('API deleteModel request: ' + req);
+    logger.debug(`API deleteModel request: ${logger.transformToString(req)}`);
 
     try {
         const deleteResp = await repository.deleteAsync(modelInfo, req.provider.access_token);
@@ -205,9 +211,29 @@ const organisation = (req, res) => {
         hostname: env.get().config.GITHUB_ENTERPRISE_HOSTNAME || 'www.github.com',
         port: env.get().config.GITHUB_ENTERPRISE_PORT || '',
     };
-    logger.debug('API organisation request: ' + req);
+    logger.debug(`API organisation request: ${logger.transformToString(req)}`);
 
     return res.status(200).send(organisation);
+};
+
+const createBranch = async (req, res) => {
+    const repository = repositories.get();
+
+    const branchInfo = {
+        organisation: req.params.organisation,
+        repo: req.params.repo,
+        branch: req.params.branch,
+        ref: req.body.refBranch
+    };
+    logger.debug(`API createBranch request: ${logger.transformToString(req)}`);
+
+    try {
+        const createBranchResp = await repository.createBranchAsync(branchInfo, req.provider.access_token);
+        return res.status(201).send(createBranchResp);
+    } catch (err) {
+        logger.error(err);
+        return serverError('Error creating branch', res, logger);
+    }
 };
 
 export default {
@@ -218,5 +244,6 @@ export default {
     models,
     organisation,
     repos,
-    update
+    update,
+    createBranch
 };

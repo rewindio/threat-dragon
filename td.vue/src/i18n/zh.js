@@ -15,7 +15,7 @@ const zho = {
     providers: {
         desktop: {
             displayName: 'Threat Dragon',
-            loginWith: 'Start'
+            loginWith: '开始'
         },
         github: {
             displayName: 'GitHub',
@@ -27,6 +27,10 @@ const zho = {
         },
         bitbucket: {
             displayName: 'Bitbucket',
+            loginWith: '登录'
+        },
+        google: {
+            displayName: 'Google',
             loginWith: '登录'
         },
         local: {
@@ -52,12 +56,12 @@ const zho = {
     desktop: {
         file: {
             heading: '文件',
-            clearRecentDocs: 'Clear Menu',
+            clearRecentDocs: '清除菜单',
             close: '关闭模型',
-            closeWindow: 'Close Window',
+            closeWindow: '关闭窗口',
             new: 'New Model',
             open: '打开模型',
-            recentDocs: 'Open Recent',
+            recentDocs: '最近打开',
             save: '保存模型',
             saveAs: '模型另存为'
         },
@@ -79,7 +83,16 @@ const zho = {
     branch: {
         select: '选择一个分支',
         from: '从下面列表或',
-        chooseRepo: '选择另一个源'
+        chooseRepo: '选择另一个源',
+        or: '或者',
+        addNew: '添加新分支',
+        protectedBranch: '受保护的分支',
+        nameRequired: '分支名称是必需的',
+        nameExists: '分支名称已存在',
+        refBranch: '参考分支',
+        add: '添加分支',
+        cancel: '取消',
+        name: '分支名称',
     },
     threatmodelSelect: {
         select: '从中选择一个威胁模型',
@@ -150,20 +163,20 @@ const zho = {
             text: '文本',
             description: '说明',
             outOfScope: '超出范围',
-            bidirection: 'Bidirectional',
+            bidirection: '双向',
             reasonOutOfScope: '超出范围的原因',
-            handlesCardPayment: 'Card payment',
-            handlesGoodsOrServices: 'Goods or Services',
-            isALog: '是日志',
+            handlesCardPayment: '支付卡',
+            handlesGoodsOrServices: '货物或服务',
+            isALog: '日志',
             isEncrypted: '加密',
             isSigned: '签名',
-            isWebApplication: 'Web Application',
+            isWebApplication: 'Web应用程序',
             privilegeLevel: '权限级别',
             providesAuthentication: '提供身份验证',
             protocol: '协议',
             publicNetwork: '公共网络',
             storesCredentials: '存储凭证',
-            storesInventory: 'Stores Inventory'
+            storesInventory: '存储库存'
         },
         buttons: {
             delete: '删除选中',
@@ -207,6 +220,10 @@ const zho = {
             zoom: {
                 shortcut: '(ctrl/cmd) + 鼠标滚轮',
                 action: '缩放'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -236,24 +253,26 @@ const zho = {
         discardTitle: '放弃更改？',
         discardMessage: '您确定要放弃您的更改吗？',
         edit: '编辑',
-        exportAs: 'Export Model As',
-        exportHtml: '报告HTML',
-        exportPdf: '报告PDF',
-        exportTd: 'Original (Threat Dragon)',
-        exportOtm: 'Open Threat Model (OTM)',
+        exportAs: '导出模型为',
+        exportHtml: '导出HTML',
+        exportPdf: '导出PDF',
+        exportTd: '原始 (Threat Dragon)',
+        exportOtm: '开放威胁模型 (OTM)',
         import: '导入',
         ok: 'OK',
         open: '打开',
         openModel: '打开模型',
         print: '打印',
-        reload: '重新输入',
+        reload: '重新加载',
         remove: '删除',
         report: '报告',
         save: '保存',
         saveAs: '保存为',
         saveModel: '保存模型',
-        saveModelAs: '模型保存为',
-        search: '搜索'
+        saveModelAs: '模型另存为',
+        search: '搜索',
+        next: '下一个',
+        previous: '上一个'
     },
     threats: {
         model: {
@@ -265,9 +284,9 @@ const zho = {
             },
             die: {
                 header: '--- DIE ---',
-                distributed: 'Distributed',
-                immutable: 'Immutable',
-                ephemeral: 'Ephemeral'
+                distributed: '分布式',
+                immutable: '不可变性',
+                ephemeral: '短暂性'
             },
             linddun: {
                 header: '--- LINDDUN ---',
@@ -276,19 +295,19 @@ const zho = {
                 nonRepudiation: '不可否认性',
                 detectability: '可检测性',
                 disclosureOfInformation: '信息泄露',
-                unawareness: '不了解',
-                nonCompliance: '不遵守规定'
+                unawareness: '不知情',
+                nonCompliance: '不合规'
             },
             plot4ai: {
                 header: '--- PLOT4ai ---',
-                techniqueProcesses: 'Technique & Processes',
-                accessibility: 'Accessibility',
-                identifiabilityLinkability: 'Identifiability & Linkability',
-                security: 'Security',
-                safety: 'Safety',
-                unawareness: 'Unawareness',
-                ethicsHumanRights: 'Ethics & Human Rights',
-                nonCompliance: 'Non-compliance'
+                techniqueProcesses: '技术 & 过程',
+                accessibility: '可访问性',
+                identifiabilityLinkability: '可识别性 & 可链接性',
+                security: '信息安全',
+                safety: '系统安全',
+                unawareness: '不知情',
+                ethicsHumanRights: '伦理 & 人权',
+                nonCompliance: '不合格'
             },
             stride: {
                 header: '--- STRIDE ---',
@@ -334,9 +353,11 @@ const zho = {
             mitigated: '缓解'
         },
         priority: {
+            tbd: '待定',
             low: '低',
             medium: '中',
-            high: '高'
+            high: '高',
+            critical: '批判的'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const zho = {
             showMitigatedThreats: '显示已缓解的威胁',
             showModelDiagrams: '显示模型图',
             showEmpty: '显示空元素',
+            showProperties: 'Show element properties',
             showBranding: '显示Threat Dragon形象'
         },
         title: '威胁模型报告来自',
@@ -356,9 +378,11 @@ const zho = {
             total: '威胁总数',
             mitigated: '已缓解总数',
             notMitigated: '未缓解',
+            openCritical: '未解决/关键优先级',
             openHigh: '未解决/高优先级',
             openMedium: '未解决/中优先级',
             openLow: '未解决/低优先级',
+            openTbd: '未解决/待定优先级',
             openUnknown: '未解决/未知优先级'
         }
     },

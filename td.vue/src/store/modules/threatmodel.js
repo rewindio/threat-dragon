@@ -26,6 +26,8 @@ import {
 } from '@/store/actions/threatmodel.js';
 import save from '@/service/save.js';
 import threatmodelApi from '@/service/api/threatmodelApi.js';
+import googleDriveApi from '../../service/api/googleDriveApi';
+import { FOLDER_SELECTED } from '../actions/folder';
 
 const state = {
     all: [],
@@ -55,6 +57,10 @@ const actions = {
                 // desktop version always saves locally
                 console.debug('Desktop create action');
                 await window.electronAPI.modelSave(state.data, state.fileName);
+            } else if (getProviderType(rootState.provider.selected) === providerTypes.google) {
+                const res = await googleDriveApi.createAsync(rootState.folder.selected, state.data, `${state.data.summary.title}.json`);
+                dispatch(FOLDER_SELECTED, res.data);
+                Vue.$toast.success(i18n.get().t('threatmodel.saved') + ' : ' + state.fileName);
             } else {
                 await threatmodelApi.createAsync(
                     rootState.repo.selected,
@@ -79,15 +85,22 @@ const actions = {
     [THREATMODEL_DIAGRAM_SELECTED]: ({ commit }, diagram) => commit(THREATMODEL_DIAGRAM_SELECTED, diagram),
     [THREATMODEL_FETCH]: async ({ commit, dispatch, rootState }, threatModel) => {
         dispatch(THREATMODEL_CLEAR);
-        const resp = await threatmodelApi.modelAsync(
-            rootState.repo.selected,
-            rootState.branch.selected,
-            threatModel
-        );
+        let resp;
+        if (getProviderType(rootState.provider.selected) === providerTypes.google) {
+            resp = await googleDriveApi.modelAsync(
+                threatModel
+            );
+        } else {
+            resp = await threatmodelApi.modelAsync(
+                rootState.repo.selected,
+                rootState.branch.selected,
+                threatModel
+            );
+        }
         commit(THREATMODEL_FETCH, resp.data);
     },
     [THREATMODEL_FETCH_ALL]: async ({ commit, rootState }) => {
-        if (getProviderType(rootState.provider.selected) === providerTypes.local || getProviderType(rootState.provider.selected) === providerTypes.desktop) {
+        if (getProviderType(rootState.provider.selected) === providerTypes.local || getProviderType(rootState.provider.selected) === providerTypes.desktop || getProviderType(rootState.provider.selected) === providerTypes.google) {
             commit(THREATMODEL_FETCH_ALL, demo.models);
         } else {
             const resp = await threatmodelApi.modelsAsync(
@@ -101,7 +114,7 @@ const actions = {
     [THREATMODEL_RESTORE]: async ({ commit, state, rootState }) => {
         let originalModel = JSON.parse(state.stash);
         console.debug('Restore threat model action');
-        if (getProviderType(rootState.provider.selected) !== providerTypes.local && getProviderType(rootState.provider.selected) !== providerTypes.desktop) {
+        if (getProviderType(rootState.provider.selected) !== providerTypes.local && getProviderType(rootState.provider.selected) !== providerTypes.desktop && getProviderType(rootState.provider.selected) !== providerTypes.google) {
             const originalTitle = (JSON.parse(state.stash)).summary.title;
             const resp = await threatmodelApi.modelAsync(
                 rootState.repo.selected,
@@ -114,19 +127,21 @@ const actions = {
     },
     [THREATMODEL_SAVE]: async ({ dispatch, commit, rootState, state }) => {
         console.debug('Save threat model action');
-        // Identify if threat model is in OTM format and if so, convert dragon to OTM format
+        // Identify if threat model is in OTM format
         if (Object.hasOwn(state.data, 'otmVersion')) {
+            //  convert dragon to OTM format not yet available
             Vue.$toast.warning('Saving in Open Threat Model format not yet supported');
+            // continue to saving in dragon format
         }
         try {
             if (getProviderType(rootState.provider.selected) === providerTypes.local) {
                 // save locally for web app when local login
-                Vue.$toast.success(i18n.get().t('threatmodel.saved') + ' : ' + state.fileName);
                 save.local(state.data, `${state.data.summary.title}.json`);
             } else if (getProviderType(rootState.provider.selected) === providerTypes.desktop) {
                 // desktop version always saves locally
-                Vue.$toast.success(i18n.get().t('threatmodel.saved') + ' : ' + state.fileName);
                 await window.electronAPI.modelSave(state.data, state.fileName);
+            } else if (getProviderType(rootState.provider.selected) === providerTypes.google) {
+                await googleDriveApi.updateAsync(rootState.folder.selected, state.data);
             } else {
                 await threatmodelApi.updateAsync(
                     rootState.repo.selected,
@@ -134,10 +149,10 @@ const actions = {
                     state.data.summary.title,
                     state.data
                 );
-                Vue.$toast.success(i18n.get().t('threatmodel.saved') + ' : ' + state.fileName);
             }
             dispatch(THREATMODEL_STASH);
             commit(THREATMODEL_NOT_MODIFIED);
+            Vue.$toast.success(i18n.get().t('threatmodel.saved') + ' : ' + state.fileName, { timeout: 1000 });
         } catch (ex) {
             console.error('Failed to save threat model!');
             console.error(ex);
@@ -170,10 +185,9 @@ const mutations = {
     },
     [THREATMODEL_DIAGRAM_MODIFIED]: (state, diagram) => {
         if (diagram && Object.keys(state.modifiedDiagram).length !== 0) {
-            const idx = state.data.detail.diagrams.findIndex(x => x.id === diagram.id);
-            console.debug('Threatmodel diagram modified: ' + diagram.id + ' at index: ' + idx);
+            // const idx = state.data.detail.diagrams.findIndex(x => x.id === diagram.id);
+            // console.debug('Threatmodel diagram modified: ' + diagram.id + ' at index: ' + idx);
             state.modifiedDiagram = diagram;
-            // console.debug('Threatmodel diagram modified diagram: ' + JSON.stringify(state.modifiedDiagram));
             if (state.modified === false) {
                 console.debug('model (diagram) now modified');
                 state.modified = true;
@@ -183,7 +197,9 @@ const mutations = {
     [THREATMODEL_DIAGRAM_SAVED]: (state, diagram) => {
         const idx = state.data.detail.diagrams.findIndex(x => x.id === diagram.id);
         console.debug('Threatmodel diagram saved: ' + diagram.id + ' at index: ' + idx);
+        // beware: this will trigger a redraw of the diagram, ?possibly to the wrong canvas size?
         Vue.set(state, 'selectedDiagram', diagram);
+        // beware ^^
         Vue.set(state.data.detail.diagrams, idx, diagram);
         Vue.set(state.data, 'version', diagram.version);
         stashThreatModel(state, state.data);
@@ -200,9 +216,6 @@ const mutations = {
         models.forEach((model, idx) => Vue.set(state.all, idx, model));
     },
     [THREATMODEL_MODIFIED]: (state) => {
-        if (state.modified === false) {
-            console.debug('model now modified');
-        }
         state.modified = true;
     },
     [THREATMODEL_RESTORE]: (state, originalThreatModel) => {
@@ -214,13 +227,9 @@ const mutations = {
         stashThreatModel(state, threatModel);
     },
     [THREATMODEL_STASH]: (state) => {
-        console.debug('Threatmodel stashed');
         Vue.set(state, 'stash', JSON.stringify(state.data));
     },
     [THREATMODEL_NOT_MODIFIED]: (state) => {
-        if (state.modified === true) {
-            console.debug('model now unmodified');
-        }
         state.modified = false;
     },
     [THREATMODEL_UPDATE]: (state, update) => {

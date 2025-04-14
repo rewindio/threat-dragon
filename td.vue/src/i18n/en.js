@@ -29,6 +29,10 @@ const eng = {
             displayName: 'Bitbucket',
             loginWith: 'Login with'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Login with'
+        },
         local: {
             displayName: 'Local Session',
             loginWith: 'Login to'
@@ -79,7 +83,21 @@ const eng = {
     branch: {
         select: 'Select a branch from',
         from: 'from the list below or',
-        chooseRepo: 'choose another repo'
+        chooseRepo: 'choose another repo',
+        or: 'or',
+        addNew: 'add a new branch',
+        protectedBranch: 'Protected branch',
+        refBranch: 'Reference branch',
+        nameRequired: 'Branch name is required',
+        nameExists: 'Branch name already exists',
+        add: 'add branch',
+        cancel: 'Cancel',
+        name: 'branch name',
+    },
+    folder: {
+        select: 'Select a',
+        from: 'folder from the list below',
+        noneFound: 'This folder is empty, You can create a new threat model here.'
     },
     threatmodelSelect: {
         select: 'Select a Threat Model from',
@@ -207,6 +225,10 @@ const eng = {
             zoom: {
                 shortcut: '(ctrl/cmd) + mousewheel',
                 action: 'Zoom'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -236,6 +258,7 @@ const eng = {
         discardTitle: 'Discard Changes?',
         discardMessage: 'Are you sure you want to discard your changes?',
         edit: 'Edit',
+        export: 'Export',
         exportAs: 'Export Model As',
         exportHtml: 'HTML Report',
         exportPdf: 'PDF Report',
@@ -253,7 +276,9 @@ const eng = {
         saveAs: 'Save As',
         saveModel: 'Save Model',
         saveModelAs: 'Save Model As',
-        search: 'Search'
+        search: 'Search',
+        next:'Next',
+        previous:'Previous'
     },
     threats: {
         model: {
@@ -334,9 +359,11 @@ const eng = {
             mitigated: 'Mitigated'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Low',
             medium: 'Medium',
-            high: 'High'
+            high: 'High',
+            critical: 'Critical'
         }
     },
     report: {
@@ -345,6 +372,7 @@ const eng = {
             showMitigatedThreats: 'Show mitigated threats',
             showModelDiagrams: 'Show model diagrams',
             showEmpty: 'Show empty elements',
+            showProperties: 'Show element properties',
             showBranding: 'Threat Dragon logo'
         },
         title: 'Threat model report for',
@@ -356,9 +384,11 @@ const eng = {
             total: 'Total Threats',
             mitigated: 'Total Mitigated',
             notMitigated: 'Not Mitigated',
+            openCritical: 'Open / Critical Priority',
             openHigh: 'Open / High Priority',
             openMedium: 'Open / Medium Priority',
             openLow: 'Open / Low Priority',
+            openTbd: 'Open / TBD Priority',
             openUnknown: 'Open / Unknown Priority'
         }
     },

@@ -29,6 +29,10 @@ const ms = {
             displayName: 'Bitbucket',
             loginWith: 'Log masuk dengan'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Log masuk dengan'
+        },
         local: {
             displayName: 'Sesi Tempatan',
             loginWith: 'Log masuk ke'
@@ -79,7 +83,16 @@ const ms = {
     branch: {
         select: 'Pilih cawangan dari',
         from: 'dari senarai di bawah atau',
-        chooseRepo: 'pilih repo lain'
+        chooseRepo: 'pilih repo lain',
+        or: 'atau',
+        addNew: 'tambah cawangan baru',
+        protectedBranch: 'Cawangan Dilindungi',
+        nameRequired: 'Nama cawangan diperlukan',
+        nameExists: 'Nama cawangan sudah wujud',
+        refBranch: 'Cawangan Rujukan',
+        add: 'tambah cawangan',
+        cancel: 'Batal',
+        nama: 'nama cawangan',
     },
     threatmodelSelect: {
         select: 'Pilih Model Ancaman dari',
@@ -207,6 +220,10 @@ const ms = {
             zoom: {
                 shortcut: '(ctrl/cmd) + roda tetikus',
                 action: 'Zum'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const ms = {
         saveAs: 'Simpan Sebagai',
         saveModel: 'Simpan Model',
         saveModelAs: 'Simpan Model Sebagai',
-        search: 'Carian'
+        search: 'Carian',
+        next: 'seterusnya',
+        previous: 'sebelumnya'
     },
     threats: {
         model: {
@@ -335,9 +354,11 @@ const ms = {
             mitigated: 'Ditangani'
         },
         priority: {
+            tbd: 'TBD',
             low: 'Rendah',
             medium: 'Sederhana',
-            high: 'Tinggi'
+            high: 'Tinggi',
+            critical: 'kritikal'
         }
     },
     report: {
@@ -346,6 +367,7 @@ const ms = {
             showMitigatedThreats: 'Tunjukkan ancaman yang ditangani',
             showModelDiagrams: 'Tunjukkan gambarajah model',
             showEmpty: 'Tunjukkan elemen kosong',
+            showProperties: 'Show element properties',
             showBranding: 'Logo Threat Dragon'
         },
         title: 'Laporan model ancaman untuk',
@@ -357,9 +379,11 @@ const ms = {
             total: 'Jumlah Ancaman',
             mitigated: 'Jumlah Ditangani',
             notMitigated: 'Belum Ditangani',
+            openCritical: 'Buka / Keutamaan Kritikal',
             openHigh: 'Buka / Keutamaan Tinggi',
             openMedium: 'Buka / Keutamaan Sederhana',
             openLow: 'Buka / Keutamaan Rendah',
+            openTbd: 'Buka / Keutamaan TBD',
             openUnknown: 'Buka / Keutamaan Tidak Diketahui'
         }
     },

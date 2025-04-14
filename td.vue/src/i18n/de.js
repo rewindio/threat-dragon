@@ -29,6 +29,10 @@ const deu = {
             displayName: 'Bitbucket',
             loginWith: 'Anmelden mit'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Anmelden mit'
+        },
         local: {
             displayName: 'Lokale Sitzung',
             loginWith: 'Anmelden an'
@@ -79,7 +83,16 @@ const deu = {
     branch: {
         select: 'Wähle einen Branch aus', //in line with Github wording https://docs.github.com/de/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository
         from: 'aus folgender Liste aus',
-        chooseRepo: 'ein anderes Repository auswählen'
+        chooseRepo: 'ein anderes Repository auswählen',
+        or: 'oder',
+        addNew: 'füge einen neuen Branch hinzu',
+        protectedBranch: 'Geschützter Branch',
+        nameRequired: 'Branch Name ist erforderlich',
+        nameExists: 'Branch Name existiert bereits',
+        refBranch: 'Referenz Branch',
+        add: 'Branch hinzufügen',
+        cancel: 'Abbrechen',
+        name: 'Branch Name'
     },
     threatmodelSelect: {
         select: 'Ein Bedrohungsmodell auswählen aus',
@@ -207,6 +220,10 @@ const deu = {
             zoom: {
                 shortcut: '(Strg/cmd) + Mausrad',
                 action: 'Zoomen'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const deu = {
         saveAs: 'Speichern als',
         saveModel: 'Modell speichern',
         saveModelAs: 'Modell speichern als',
-        search: 'Suchen'
+        search: 'Suchen',
+        next: 'nächste',
+        previous: 'vorherige'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const deu = {
             mitigated: 'Abgeschwächt'
         },
         priority: {
+            tbd: '',
             low: 'Niedrig',
             medium: 'Mittel',
-            high: 'Hoch'
+            high: 'Hoch',
+            critical: 'Kritisch'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const deu = {
             showMitigatedThreats: 'Abgeschwächte Bedrohungen anzeigen',
             showModelDiagrams: 'Modell Diagramme anzeigen',
             showEmpty: 'Leere Elemente anzeigen',
+            showProperties: 'Show element properties',
             showBranding: 'Threat Dragon Logo'
         },
         title: 'Bedrohungsmodell Bereicht für',
@@ -356,9 +378,11 @@ const deu = {
             total: 'Bedrohungen insgesamt',
             mitigated: 'Bedrohungen abgeschwächt',
             notMitigated: 'Nicht abgeschwächt',
+            openCritical: 'Offen / Kritische Priorität',
             openHigh: 'Offen / Hohe Priorität',
             openMedium: 'Offen / Mittlere Priorität',
             openLow: 'Offen / Niedrige Priorität',
+            openTbd: 'Offen / TBD-Priorität',
             openUnknown: 'Offen / Unbekannte Priorität'
         }
     },

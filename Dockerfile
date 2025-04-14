@@ -1,7 +1,7 @@
-ARG         NODE_VERSION=18
+ARG         NODE_VERSION=20.17
 
 # The base image with updates applied
-FROM        node:$NODE_VERSION-alpine as base-node
+FROM        node:$NODE_VERSION-alpine AS base-node
 RUN         apk -U upgrade
 WORKDIR     /app
 RUN         npm i -g npm@latest
@@ -12,7 +12,7 @@ USER        node
 
 # Build the front and back-end.  This needs devDependencies which do not
 # need to be included in the final image
-FROM        base-node as build
+FROM        base-node AS build
 RUN         mkdir boms
 
 COPY        package-lock.json package.json /app/
@@ -35,14 +35,17 @@ RUN         cp td.server/sbom.json        boms/threat-dragon-server-bom.json && 
             cp td.vue/dist/.sbom/bom.json boms/threat-dragon-site-bom.json   && \
             cp td.vue/dist/.sbom/bom.xml  boms/threat-dragon-site-bom.xml
 
-# Builds the docs
-FROM        imoshtokill/jekyll-bundler as build-docs
+
+FROM        ruby:3.2-slim-bullseye AS build-docs
+RUN         apt-get update \
+            && apt-get install -y --no-install-recommends \
+            build-essential \
+            && rm -rf /var/lib/apt/lists/*
 WORKDIR     /td.docs
-COPY        ./docs/Gemfile* ./
+COPY        docs/Gemfile Gemfile
+COPY        docs/Gemfile.lock Gemfile.lock
 RUN         bundle install
-COPY        ./docs .
-RUN         mkdir _data
-RUN         mkdir downloads
+COPY        docs/ .
 RUN         bundle exec jekyll build -b docs/
 
 

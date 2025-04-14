@@ -1,4 +1,4 @@
-import { BootstrapVue } from 'bootstrap-vue';
+import { BootstrapVue, BDropdown } from 'bootstrap-vue';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 
@@ -6,10 +6,26 @@ import TdFormButton from '@/components/FormButton.vue';
 import TdGraphButtons from '@/components/GraphButtons.vue';
 
 describe('components/GraphButtons.vue', () => {
-    let btn, graph, localVue, wrapper;
+    let btn, graph, localVue, wrapper, mockUndo, mockRedo, mockCanUndo, mockCanRedo;
 
     beforeEach(() => {
-        graph = {};
+        mockUndo = jest.fn();
+        mockRedo = jest.fn();
+        mockCanUndo = jest.fn().mockReturnValue(true);
+        mockCanRedo = jest.fn().mockReturnValue(true);
+        graph = {
+            history: {},
+            getPlugin: (name) => {
+                if (name === 'history') {
+                    return {
+                        canUndo: mockCanUndo,
+                        canRedo: mockCanRedo,
+                        undo: mockUndo,
+                        redo: mockRedo
+                    };
+                }
+            }
+        };
         localVue = createLocalVue();
         localVue.use(BootstrapVue);
         localVue.use(Vuex);
@@ -31,9 +47,15 @@ describe('components/GraphButtons.vue', () => {
         });
     });
 
-    const getButtonByIcon = (icon) => wrapper.findAllComponents(TdFormButton)
-        .filter(x => x.attributes('icon') === icon)
-        .at(0);
+    afterEach(() => {
+        jest.resetAllMocks();
+    });
+
+    const getButtonByIcon = (icon) =>
+        wrapper
+            .findAllComponents(TdFormButton)
+            .filter((x) => x.attributes('icon') === icon)
+            .at(0);
 
     describe('save', () => {
         beforeEach(() => {
@@ -43,11 +65,6 @@ describe('components/GraphButtons.vue', () => {
 
         it('has the save translation text', () => {
             expect(btn.attributes('text')).toEqual('forms.save');
-
-        });
-
-        it('emits the saved event', () => {
-            expect(wrapper.emitted().saved);
         });
     });
 
@@ -59,10 +76,6 @@ describe('components/GraphButtons.vue', () => {
 
         it('has the save translation text', () => {
             expect(btn.attributes('text')).toEqual('forms.close');
-        });
-
-        it('emits the closed event', () => {
-            expect(wrapper.emitted().closed);
         });
     });
 
@@ -91,25 +104,22 @@ describe('components/GraphButtons.vue', () => {
 
         describe('graph can undo', () => {
             beforeEach(() => {
-                graph.canUndo = () => true;
-                graph.undo = jest.fn();
                 wrapper.vm.undo();
             });
 
             it('calls undo', () => {
-                expect(graph.undo).toHaveBeenCalledTimes(1);
+                expect(mockUndo).toHaveBeenCalledTimes(1);
             });
         });
 
         describe('graph cannot undo', () => {
             beforeEach(() => {
-                graph.canUndo = () => false;
-                graph.undo = jest.fn();
+                mockCanUndo = jest.fn().mockReturnValue(false);
                 wrapper.vm.undo();
             });
 
-            it('calls undo', () => {
-                expect(graph.undo).not.toHaveBeenCalled();
+            it('does not call undo', () => {
+                expect(mockUndo).not.toHaveBeenCalled();
             });
         });
     });
@@ -125,25 +135,22 @@ describe('components/GraphButtons.vue', () => {
 
         describe('graph can redo', () => {
             beforeEach(() => {
-                graph.canRedo = () => true;
-                graph.redo = jest.fn();
                 wrapper.vm.redo();
             });
 
             it('calls redo', () => {
-                expect(graph.redo).toHaveBeenCalledTimes(1);
+                expect(mockRedo).toHaveBeenCalledTimes(1);
             });
         });
 
         describe('graph cannot redo', () => {
             beforeEach(() => {
-                graph.canRedo = () => false;
-                graph.redo = jest.fn();
+                mockCanRedo = jest.fn().mockReturnValue(false);
                 wrapper.vm.redo();
             });
 
             it('calls redo', () => {
-                expect(graph.redo).not.toHaveBeenCalled();
+                expect(mockRedo).not.toHaveBeenCalled();
             });
         });
     });
@@ -224,6 +231,31 @@ describe('components/GraphButtons.vue', () => {
                     expect(graph.showGrid).toHaveBeenCalledTimes(1);
                 });
             });
+        });
+    });
+
+    describe('export', () => {
+        beforeEach(() => {
+            btn = wrapper
+                .findAllComponents(BDropdown)
+                .filter((x) => x.attributes('id') === 'export-graph-btn')
+                .at(0);
+        });
+
+        it('has the export translation text', () => {
+            expect(btn.attributes('text')).toEqual('forms.export');
+        });
+
+        it('has a dropdown item for PNG', () => {
+            expect(btn.find('#export-graph-png').exists()).toBe(true);
+        });
+
+        it('has a dropdown item for JPEG', () => {
+            expect(btn.find('#export-graph-jpeg').exists()).toBe(true);
+        });
+
+        it('has a dropdown item for SVG', () => {
+            expect(btn.find('#export-graph-svg').exists()).toBe(true);
         });
     });
 });

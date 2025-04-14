@@ -6,7 +6,7 @@ import eng from '@/i18n/en.js';
 import fin from '@/i18n/fi.js';
 import fra from '@/i18n/fr.js';
 import hin from '@/i18n/hi.js';
-import id from '@/i18n/id.js';
+import ind from '@/i18n/id.js';
 import ms from '@/i18n/ms.js';
 import por from '@/i18n/pt.js';
 import rus from '@/i18n/ru.js';
@@ -54,15 +54,6 @@ describe('desktop/menu.js', () => {
         it('contains open model', () => {
             const openModelItem = fileItems.submenu.find((item) => item.label === 'Open Model');
             expect(openModelItem).toBeDefined();
-        });
-
-        it('contains recent items', () => {
-            const recentItems = {
-                'label': 'Open Recent',
-                'role': 'recentdocuments',
-                'submenu': [{'label': 'Clear Menu', 'role': 'clearrecentdocuments'}]
-            };
-            expect(fileItems.submenu).toContainEqual(recentItems);
         });
 
         it('contains save model', () => {
@@ -299,8 +290,8 @@ describe('desktop/menu.js', () => {
             });
 
             it('should provide translation for Bahasa Indonesia', () => {
-                menu.setLocale('id');
-                const helpItems = menu.getMenuTemplate().find((item) => item.label === id.desktop.help.heading);
+                menu.setLocale('ind');
+                const helpItems = menu.getMenuTemplate().find((item) => item.label === ind.desktop.help.heading);
                 expect(helpItems).toBeDefined();
             });
 

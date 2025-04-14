@@ -19,23 +19,14 @@ const isConfigured = () => Boolean(env.get().config.GITLAB_CLIENT_ID);
  * Gets the Gitlab endpoint, which will be gitlab.com by default OR a custom endpoint for Gitlab enterprise scenarios
  * @returns {String}
  */
-const getGitlabUrl = () => {
-    const enterpriseHostname = env.get().config.GITLAB_ENTERPRISE_HOSTNAME;
-    if(enterpriseHostname) {
-        const port = env.get().config.GITLAB_ENTERPRISE_PORT || '';
-        const protocol = env.get().config.GITLAB_ENTERPRISE_PROTOCOL || 'https';
-        const enterpriseUrl = `${protocol}://${enterpriseHostname}${port ? ':' + port : ''}`;
-        return enterpriseUrl;
-    }
-    return 'https://gitlab.com';
-};
+const getGitlabUrl = () => env.get().config.GITLAB_HOST || 'https://gitlab.com';
 
 /**
  * Gets the Gitlab OAuth Login URL
  * @returns {String}
  */
 const getOauthRedirectUrl = () => {
-    const scope = env.get().config.GITLAB_SCOPE || 'read_user,read_repository,write_repository,profile';
+    const scope = env.get().config.GITLAB_SCOPE || 'read_user read_repository write_repository profile';
     return `${getGitlabUrl()}/oauth/authorize?scope=${scope}&redirect_uri=${env.get().config.GITLAB_REDIRECT_URI}&response_type=code&client_id=${env.get().config.GITLAB_CLIENT_ID}`;
 };
 

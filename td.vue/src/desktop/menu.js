@@ -19,7 +19,7 @@ import eng from '@/i18n/en.js';
 import fin from '@/i18n/fi.js';
 import fra from '@/i18n/fr.js';
 import hin from '@/i18n/hi.js';
-import id from '@/i18n/id.js';
+import ind from '@/i18n/id.js';
 import jpn from '@/i18n/ja.js';
 import ms from '@/i18n/ms.js';
 import por from '@/i18n/pt.js';
@@ -28,10 +28,8 @@ import spa from '@/i18n/es.js';
 // hide RUS & UKR for now: import ukr from '@/i18n/uk.js';
 import zho from '@/i18n/zh.js';
 
-const messages = { ara, deu, ell, eng, fin, fra, hin, id, jpn, ms, por, spa, zho };
-// hide RUS & UKR for now: const messages = { ara, deu, ell, eng, fin, fra, hin, id, jpn, ms, por, rus, spa, ukr, zho };
-const languages = [ 'ara', 'deu', 'ell', 'eng', 'fin', 'fra', 'hin', 'id', 'jpn', 'ms', 'por', 'spa', 'zho' ];
-// hide RUS & UKR for now: const languages = [ 'ara', 'deu', 'ell', 'eng', 'fin', 'fra', 'hin', 'id', 'jpn', 'ms', 'por', 'rus', 'spa', 'ukr', 'zho' ];
+const messages = { ara, deu, ell, eng, fin, fra, hin, ind, jpn, ms, por, spa, zho };
+const languages = [ 'ara', 'deu', 'ell', 'eng', 'fin', 'fra', 'hin', 'ind', 'jpn', 'ms', 'por', 'spa', 'zho' ];
 const defaultLanguage = 'eng';
 var language = defaultLanguage;
 
@@ -42,8 +40,8 @@ export const model = {
 };
 
 export function getMenuTemplate () {
-    return [
-        ...(isMacOS ? [{ role: 'appMenu' }] : []),
+    var menuTemplate = (isMacOS ? [{ role: 'appMenu' }] : []);
+    menuTemplate.push(
         {
             label: messages[language].desktop.file.heading,
             submenu: [
@@ -52,16 +50,6 @@ export function getMenuTemplate () {
                     click () {
                         openModelRequest('');
                     }
-                },
-                {
-                    label: messages[language].desktop.file.recentDocs,
-                    role: 'recentdocuments',
-                    submenu: [
-                        {
-                            label: messages[language].desktop.file.clearRecentDocs,
-                            role: 'clearrecentdocuments'
-                        }
-                    ]
                 },
                 {
                     label: messages[language].desktop.file.save,
@@ -128,7 +116,7 @@ export function getMenuTemplate () {
                 {
                     label: messages[language].desktop.help.docs,
                     click: async () => {
-                        await shell.openExternal('https://owasp.org/www-project-threat-dragon/docs-2/');
+                        await shell.openExternal('https://www.threatdragon.com/docs/');
                     }
                 },
                 {
@@ -166,7 +154,25 @@ export function getMenuTemplate () {
                 { role: 'about' }
             ]
         }
-    ];
+    );
+
+    if (isMacOS) {
+        // recent docs only for macos, see www.electronjs.org/docs/latest/api/menu-item#roles
+        menuTemplate[1].submenu.push(
+            {
+                label: messages[language].desktop.file.recentDocs,
+                role: 'recentdocuments',
+                submenu: [
+                    {
+                        label: messages[language].desktop.file.clearRecentDocs,
+                        role: 'clearrecentdocuments'
+                    }
+                ]
+            }
+        );
+    }
+
+    return menuTemplate;
 }
 
 // Open file system dialog and read file contents into model
@@ -344,7 +350,8 @@ function savePDFReport (pdfPath) {
     var dialogOptions = {
         title: messages[language].forms.exportPdf,
         defaultPath: pdfPath,
-        filters: [{ name: 'PDF report', extensions: ['.pdf'] }, { name: 'All Files', extensions: ['*'] }]
+        properties: ['openFile'],
+        filters: [{ name: 'PDF report', extensions: ['pdf'] }, { name: 'All Files', extensions: ['*'] }]
     };
 
     dialog.showSaveDialog(dialogOptions).then(result => {

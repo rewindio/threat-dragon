@@ -182,6 +182,8 @@ export default {
             Object.keys(threatTypes).forEach((type) => {
                 res.push(this.$t(type));
             }, this);
+            if(!res.includes(this.threat.type))
+                res.push(this.threat.type);
             return res;
         },
         statuses() {
@@ -193,9 +195,11 @@ export default {
         },
         priorities() {
             return [
+                { value: 'TBD', text: this.$t('threats.priority.tbd') },
                 { value: 'Low', text: this.$t('threats.priority.low') },
                 { value: 'Medium', text: this.$t('threats.priority.medium') },
-                { value: 'High', text: this.$t('threats.priority.high') }
+                { value: 'High', text: this.$t('threats.priority.high') },
+                { value: 'Critical', text: this.$t('threats.priority.critical') }
             ];
         },
         modalTitle() { return this.$t('threats.edit') + ' #' + this.number; }
@@ -228,8 +232,19 @@ export default {
         },
         updateThreat() {
             const threatRef = this.cellRef.data.threats.find(x => x.id === this.threat.id);
-
             if (threatRef) {
+                const objRef = this.cellRef.data;
+                if(!objRef.threatFrequency){
+                    const tmpfreq = threatModels.getFrequencyMapByElement(this.threat.modelType,this.cellRef.data.type);
+                    if(tmpfreq!==null)
+                        objRef.threatFrequency = tmpfreq;
+                }
+                if(objRef.threatFrequency){
+                    Object.keys(objRef.threatFrequency).forEach((k)=>{
+                        if(this.$t(`threats.model.${this.threat.modelType.toLowerCase()}.${k}`)===this.threat.type)
+                            objRef.threatFrequency[k]++;
+                    });
+                }
                 threatRef.status = this.threat.status;
                 threatRef.severity = this.threat.severity;
                 threatRef.title = this.threat.title;
@@ -247,6 +262,13 @@ export default {
             this.hideModal();
         },
         deleteThreat() {
+            if(!this.threat.new){
+                const threatMap = this.cellRef.data.threatFrequency;
+                Object.keys(threatMap).forEach((k)=>{
+                    if(this.$t(`threats.model.${this.threat.modelType.toLowerCase()}.${k}`)===this.threat.type)
+                        threatMap[k]--;
+                });
+            }
             this.cellRef.data.threats = this.cellRef.data.threats.filter(x => x.id !== this.threat.id);
             this.cellRef.data.hasOpenThreats = this.cellRef.data.threats.length > 0;
             this.$store.dispatch(CELL_DATA_UPDATED, this.cellRef.data);

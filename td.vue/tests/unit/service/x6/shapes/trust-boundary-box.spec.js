@@ -13,26 +13,21 @@ describe('service/x6/shapes/trust-boundary-box.js', () => {
         expect(victim.constructor.name).toEqual('TrustBoundaryBox');
     });
 
+    describe('get victim attributes', () => {
+        it('sets the stroke dash array', () => {
+            expect(victim.attrs.body.strokeDasharray).toEqual('10 5');
+        });
+
+        it('sets the stroke width', () => {
+            expect(victim.attrs.body.strokeWidth).toEqual(3);
+        });
+    });
+
     describe('setName', () => {
         it('sets the name', () => {
             const name = 'tbbName';
             victim.setName(name);
-            expect(victim.setAttrByPath).toHaveBeenCalledWith('headerText/text', name);
-        });
-    });
-
-    describe('getLabel', () => {
-        it('gets the label', () => {
-            victim.getLabel();
-            expect(victim.getAttrByPath).toHaveBeenCalledWith('headerText/text');
-        });
-    });
-
-    describe('setLabel', () => {
-        it('sets the label', () => {
-            const name = 'tbbName';
-            victim.setLabel(name);
-            expect(victim.setAttrByPath).toHaveBeenCalledWith('headerText/text', name);
+            expect(victim.setAttrByPath).toHaveBeenCalledWith('label/text', name);
         });
     });
 

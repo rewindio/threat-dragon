@@ -29,6 +29,10 @@ const spa = {
             displayName: 'Bitbucket',
             loginWith: 'Conectarse con'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Conectarse con'
+        },
         local: {
             displayName: 'Sesión Local',
             loginWith: 'Conectarse con'
@@ -79,7 +83,15 @@ const spa = {
     branch: {
         select: 'Seleccione un branch',
         from: 'de la lista a continuación o',
-        chooseRepo: 'elija otro repositorio'
+        chooseRepo: 'elija otro repositorio',
+        addNew: 'o añadir una nueva rama',
+        protectedBranch: 'Rama protegida',
+        nameRequired: 'El nombre de la rama es obligatorio',
+        nameExists: 'El nombre de la rama ya existe',
+        refBranch: 'Rama de referencia',
+        add: 'Añadir rama',
+        cancel: 'Cancelar',
+        name: 'Nombre de la sucursal',
     },
     threatmodelSelect: {
         select: 'Seleccione un modelo de amenazas (threat model) ',
@@ -207,6 +219,10 @@ const spa = {
             zoom: {
                 shortcut: '(ctrl/cmd) + rueda de desplazamiento del ratón',
                 action: 'Zoom'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +269,9 @@ const spa = {
         saveAs: 'Guardar como',
         saveModel: 'Guardar modelo',
         saveModelAs: 'Guardar modelo como',
-        search: 'Buscar'
+        search: 'Buscar',
+        next: 'próximo',
+        previous: 'Previo'
     },
     threats: {
         model: {
@@ -334,9 +352,11 @@ const spa = {
             mitigated: 'Mitigado'
         },
         priority: {
+            tbd: 'Por confirmar',
             low: 'Baja',
             medium: 'Media',
-            high: 'Alta'
+            high: 'Alta',
+            critical: 'Crítica'
         }
     },
     report: {
@@ -345,6 +365,7 @@ const spa = {
             showMitigatedThreats: 'Mostrar amenazas mitigadas',
             showModelDiagrams: 'Mostrar diagramas de modelo',
             showEmpty: 'Show empty elements',
+            showProperties: 'Show element properties',
             showBranding: 'Marca de Threat Dragon'
         },
         title: 'Reporte de modelo de amenaza para',
@@ -356,9 +377,11 @@ const spa = {
             total: 'Total amenazas ',
             mitigated: 'Total amenazas mitigadas',
             notMitigated: 'No Mitigadas',
+            openCritical: 'Abierto / Crítica Prioridad',
             openHigh: 'Abierto / Alta Prioridad',
             openMedium: 'Abierto / Prioridad Media',
             openLow: 'Abierto / Baja Prioridad',
+            openTbd: 'Abierto / Por confirmar Prioridad',
             openUnknown: 'Abierto / Prioridad Desconocida'
         }
     },

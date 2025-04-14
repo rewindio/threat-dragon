@@ -29,6 +29,10 @@ const fra = {
             displayName: 'Bitbucket',
             loginWith: 'Se connecter avec'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'Se connecter avec'
+        },
         local: {
             displayName: 'une session locale',
             loginWith: 'Se connecter avec'
@@ -79,7 +83,16 @@ const fra = {
     branch: {
         select: 'Sélectionnez une branche parmi',
         from: 'parmi la liste ci-dessous ou',
-        chooseRepo: 'choisir un autre projet'
+        chooseRepo: 'choisir un autre projet',
+        or: 'ou',
+        addNew: 'ajouter une nouvelle branche',
+        protectedBranch: 'Branche protégée',
+        nameRequired: 'Le nom de la branche est requis',
+        nameExists: 'Le nom de la branche existe déjà',
+        refBranch: 'branche de référence',
+        add: 'Ajouter une branche',
+        cancel: 'Annuler',
+        name: 'Nom de la branche',
     },
     threatmodelSelect: {
         select: 'Sélectionnez un modèle de menace parmi',
@@ -207,6 +220,10 @@ const fra = {
             zoom: {
                 shortcut: '(ctrl/cmd) + molette de souris',
                 action: 'Agrandir'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const fra = {
         saveAs: 'Sauvergarder en tant que',
         saveModel: 'Sauvergarder le modèle',
         saveModelAs: 'Sauvergarder le modèle en tant que',
-        search: 'Rechercher'
+        search: 'Rechercher',
+        next: 'suivant',
+        previous: 'précédent'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const fra = {
             mitigated: 'Mitigé'
         },
         priority: {
+            tbd: 'à venir',
             low: 'Faible',
             medium: 'Moyen',
-            high: 'Élevé'
+            high: 'Élevé',
+            critical: 'Critique'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const fra = {
             showMitigatedThreats: 'Afficher les menaces mitigées',
             showModelDiagrams: 'Afficher les diagrammes du modèle',
             showEmpty: 'Show empty elements',
+            showProperties: 'Show element properties',
             showBranding: 'Icône de Threat Dragon'
         },
         title: 'Rapport sur le modèle de menace pour',
@@ -356,9 +378,11 @@ const fra = {
             total: 'Menaces Totales',
             mitigated: 'Menaces Totales Mitigées',
             notMitigated: 'Menaces Totales Non-Mitigées',
+            openCritical:'Ouvert / Critique Priorité',
             openHigh: 'Ouvert / Haute Priorité',
             openMedium: 'Ouvert / Moyenne Priorité',
             openLow: 'Ouvert / Faible Priorité',
+            openTbd: 'Ouvert / Priorité à déterminer',
             openUnknown: 'Ouvert / Priorité Inconnue'
         }
     },

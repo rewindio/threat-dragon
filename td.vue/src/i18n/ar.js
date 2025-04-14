@@ -29,6 +29,10 @@ const ara = {
             displayName: 'Bitbucket',
             loginWith: 'تسجيل الدخول باستخدام'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'تسجيل الدخول باستخدام'
+        },
         local: {
             displayName: 'جلسة محلية',
             loginWith: 'تسجيل الدخول إلى'
@@ -79,7 +83,16 @@ const ara = {
     branch: {
         select: 'حدد فرعًا من',
         from: 'من القائمة أدناه أو',
-        chooseRepo: 'اختيار مستودع آخر'
+        or: 'أو',
+        chooseRepo: 'اختيار مستودع آخر',
+        protectedBranch: 'فرع محمي',
+        nameRequired: 'اسم الفرع مطلوب',
+        nameExists: 'اسم الفرع موجود بالفعل',
+        refBranch: 'الفرع المرجعي',
+        addNew: 'إضافة فرع جديد',
+        add: 'إضافة فرع',
+        cancel: 'إلغاء',
+        name: 'اسم الفرع',
     },
     threatmodelSelect: {
         select: 'حدد نموذج تهديد من',
@@ -207,6 +220,10 @@ const ara = {
             zoom: {
                 shortcut: '(ctrl/cmd) + عجلة الماوس',
                 action: 'تكبير/تصغير'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -255,7 +272,9 @@ const ara = {
         saveAs: 'حفظ كـ',
         saveModel: 'حفظ النموذج',
         saveModelAs: 'حفظ النموذج كـ',
-        search: 'بحث'
+        search: 'بحث',
+        next: 'التالي',
+        previous: 'السابق'
     },
     threats: {
         model: {
@@ -336,9 +355,11 @@ const ara = {
             mitigated: 'تم التخفيف'
         },
         priority: {
+            tbd: 'سيتم الإعلان عنها',
             low: 'منخفض',
             medium: 'متوسط',
-            high: 'عالي'
+            high: 'عالي',
+            critical: 'شديد الأهمية'
         }
     },
     report: {
@@ -347,6 +368,7 @@ const ara = {
             showMitigatedThreats: 'إظهار التهديدات المُخففة',
             showModelDiagrams: 'إظهار الرسوم التوضيحية للنموذج',
             showEmpty: 'إظهار العناصر الفارغة',
+            showProperties: 'Show element properties',
             showBranding: 'شعار تهديد التنين'
         },
         title: 'تقرير نموذج التهديد لـ',
@@ -358,9 +380,11 @@ const ara = {
             total: 'إجمالي التهديدات',
             mitigated: 'الإجمالي المُخفف',
             notMitigated: 'الإجمالي غير المُخفف',
+            openCritical: 'مفتوح / الأولوية الحرجة',
             openHigh: 'مفتوح / أولوية عالية',
             openMedium: 'مفتوح / أولوية متوسطة',
             openLow: 'مفتوح / أولوية منخفضة',
+            openTbd: 'مفتوح / الأولوية في TBD',
             openUnknown: 'مفتوح / أولوية غير معروفة'
         }
     },

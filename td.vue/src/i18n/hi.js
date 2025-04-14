@@ -29,6 +29,10 @@ const hin = {
             displayName: 'Bitbucket',
             loginWith: 'से लोगिन करें'
         },
+        google: {
+            displayName: 'Google',
+            loginWith: 'से लोगिन करें'
+        },
         local: {
             displayName: 'स्थानीय सत्र',
             loginWith: 'से लोगिन करें'
@@ -79,7 +83,16 @@ const hin = {
     branch: {
         select: 'से एक शाखा का चयन करें',
         from: 'नीचे दी गई सूची से या',
-        chooseRepo: 'एक और रेपो चुनें'
+        chooseRepo: 'एक और रेपो चुनें',
+        or: 'या',
+        addNew: 'नई शाखा जोड़ें',
+        protectedBranch: 'संरक्षित शाखा',
+        nameRequired: 'एक नाम आवश्यक है',
+        nameExists: 'एक शाखा इस नाम से पहले ही मौजूद है',
+        refBranch: 'आधार शाखा',
+        add: 'शाखा जोडे',
+        cancel: 'रद्द करें',
+        name: 'शाखा का नाम',
     },
     threatmodelSelect: {
         select: 'से एक थ्रेट मॉडल का चयन करें',
@@ -207,6 +220,10 @@ const hin = {
             zoom: {
                 shortcut: '(ctrl/cmd) + mousewheel',
                 action: 'ज़ूम'
+            },
+            save: {
+                shortcut: '(ctrl/cmd) + s',
+                action: 'Save'
             }
         },
         stencil: {
@@ -253,7 +270,9 @@ const hin = {
         saveAs: 'इस रूप में सहेजें',
         saveModel: 'मॉडल सेव करें',
         saveModelAs: 'मॉडल को इस रूप में सहेजें',
-        search: 'खोज'
+        search: 'खोज',
+        next: 'अगला',
+        previous: 'पहले का'
     },
     threats: {
         model: {
@@ -334,9 +353,11 @@ const hin = {
             mitigated: 'शमन'
         },
         priority: {
+            tbd: 'टीबीए',
             low: 'कम',
             medium: 'मध्यम',
-            high: 'ऊँचा'
+            high: 'ऊँचा',
+            critical: 'गंभीर'
         }
     },
     report: {
@@ -345,6 +366,7 @@ const hin = {
             showMitigatedThreats: 'कम किए गए खतरे दिखाएं',
             showModelDiagrams: 'मॉडल आरेख दिखाएं',
             showEmpty: 'खाली तत्व दिखाएं',
+            showProperties: 'Show element properties',
             showBranding: 'शो थ्रेट ड्रैगन ब्रांडिंग'
         },
         title: 'के लिए थ्रेट मॉडल रिपोर्ट',
@@ -356,9 +378,11 @@ const hin = {
             total: 'कुल खतरे',
             mitigated: 'कुल शमन',
             notMitigated: 'कम नहीं किया गया',
+            openCritical: 'ओपन / महत्वपूर्ण प्राथमिकता',
             openHigh: 'ओपन / हाई प्रायोरिटी',
             openMedium: 'ओपन / मीडियम प्रायोरिटी',
             openLow: 'ओपन / लो प्रायोरिटी',
+            openTbd: 'ओपन / टीबीए प्राथमिकता',
             openUnknown: 'खुला / अज्ञात प्राथमिकता'
         }
     },
